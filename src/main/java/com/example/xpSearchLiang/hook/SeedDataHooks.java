@@ -13,10 +13,7 @@ import com.britesnow.snow.web.db.hibernate.HibernateSessionInViewHandler;
 import com.britesnow.snow.web.hook.AppPhase;
 import com.britesnow.snow.web.hook.On;
 import com.britesnow.snow.web.hook.annotation.WebApplicationHook;
-import com.example.xpSearchLiang.dao.ItemDao;
-import com.example.xpSearchLiang.dao.UserDao;
-import com.example.xpSearchLiang.entity.Item;
-import com.example.xpSearchLiang.entity.User;
+
 import com.google.inject.Singleton;
 
 @Singleton
