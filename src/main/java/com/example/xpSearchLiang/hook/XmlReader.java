@@ -1,6 +1,5 @@
 package com.example.xpSearchLiang.hook;
 
-import com.example.xpSearchLiang.entity.Post;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -14,13 +13,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class XmlReader {
 
 
-    public static List<Post> readPosts() {
-        List<Post> list = new ArrayList<Post>();
+    public static List<Map> readPosts() {
+        List<Map> list = new ArrayList<Map>();
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -31,17 +32,17 @@ public final class XmlReader {
             NodeList nList = doc.getElementsByTagName("row");
             for(int i = 0; i< nList.getLength() ; i ++){
                 Element entityNode = (Element)nList.item(i);
-                Post post = new Post();
+                Map post = new HashMap();
                 NamedNodeMap nameMap = entityNode.getAttributes();
                 for (int index=0,length = nameMap.getLength();index<length;index++) {
                     String nodeName =  nameMap.item(index).getNodeName();
                     String value =  nameMap.item(index).getNodeValue();
-                	if(nodeName.equals("Body")){
-                        post.setBody(value);
+                	if(nodeName.equals("Body")) {
+                        post.put(nodeName, value);
                     }else if(nodeName.equals("Tag")){
-                        post.setTags(value);
+                        post.put(nodeName, value);
                     }else if (nodeName.equals("Title")) {
-                        post.setTitle(value);
+                        post.put(nodeName, value);
                     }
                 }
                 list.add(post);

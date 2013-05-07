@@ -2,12 +2,14 @@ package com.example.xpSearchLiang;
 
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@Singleton
 public class DBManager {
     private final String url;
     private final String user;
