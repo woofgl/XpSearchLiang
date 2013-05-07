@@ -14,10 +14,10 @@ public class PostDao extends BaseHibernateDao<Post> {
         StringBuffer sql = new StringBuffer();
         sql.append("select title,ts_headline(body, plainto_tsquery('")
                 .append(q).append("'))  as body ")
-                .append(",ts_rank(to_tsvector(body), plainto_tsquery('")
+                .append(",ts_rank(to_tsvector(body||tags||title), plainto_tsquery('")
                 .append(q)
                 .append("')) as rank ")
-                .append(" from post order by rank desc");
+                .append(" from xpsearchliang_schema.post order by rank desc");
         return daoHelper.getSession().createSQLQuery(sql.toString())
                 .setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
     }
