@@ -46,6 +46,10 @@ footer{
 #indexPage{
   margin-top: 50px;
 }
+
+#indexPage .searchForm{
+  margin-top: 30px;
+}
 #indexPage h1{
   font-size: 20px;
   text-align: center;
