@@ -19,9 +19,12 @@ import java.util.Map;
 @Singleton
 public class SearchHandlers {
 
-    public static final String sql = "select title,ts_headline(body, plainto_tsquery('%s')) body " +
-            "    FROM xpsearchliang_schema.post " +
-            "    WHERE to_tsvector(body) @@ to_tsquery('%s')";
+
+    public static final String sql = "select title,ts_headline(body, plainto_tsquery('%s'))   body, " +
+            "                ts_rank(to_tsvector(body||tags||title), plainto_tsquery('%s')) rank " +
+            "                from xpsearchliang_schema.post " +
+            "                where to_tsvector(body) @@ to_tsquery('%s')" +
+            "                order by rank";
 
 
     @Inject
@@ -33,7 +36,7 @@ public class SearchHandlers {
         Connection conn = dbManager.getConnection();
         List ls = new ArrayList();
         try {
-            PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q));
+            PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q,q));
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 Map map = new HashMap();
