@@ -1,5 +1,5 @@
 
-COPY post (id, acceptedanswerid, answercount, body, commentcount, communityowneddate, creationdate, favoritecount, lastactivitydate, lasteditdate, lasteditoruserid, owneruserid, parentid, posttypeid, score, tags, title, viewcount) FROM stdin;
+COPY xpsearchliang_schema.post (id, acceptedanswerid, answercount, body, commentcount, communityowneddate, creationdate, favoritecount, lastactivitydate, lasteditdate, lasteditoruserid, owneruserid, parentid, posttypeid, score, tags, title, viewcount) FROM stdin;
 10	\N	\N	<p>This is a common question by those who have just rooted their phones.  What apps, ROMs, benefits, etc. do I get from rooting?  What should I be doing now?</p>\n	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	I've rooted my phone.  Now what?  What do I gain from rooting?	\N
 11	\N	\N	<p>I have a Google Nexus One with Android 2.2. I didn't like the default SMS-application so I installed Handcent-SMS. Now when I get an SMS, I get notified twice. How can I fix this?</p>\n	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	I installed another SMS application, now I get notified twice	\N
 12	\N	\N	<p>You can turn off notification in your stock Messaging application by going into the settings dialog  (Menu button -> Settings) and unchecking Notifications</p>\n	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N

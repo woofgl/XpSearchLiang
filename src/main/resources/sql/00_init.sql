@@ -1,8 +1,10 @@
+DROP SCHEMA  IF EXISTS  xpsearchliang_schema  CASCADE;
+
 CREATE SCHEMA xpsearchliang_schema AUTHORIZATION xpsearchliang_user;
 
 SET search_path TO xpsearchliang_schema;
 
-CREATE TABLE xpsearchliang_schema.post
+CREATE TABLE post
 (
   id bigint NOT NULL,
   acceptedanswerid bigint,
@@ -24,3 +26,5 @@ CREATE TABLE xpsearchliang_schema.post
   viewcount integer,
   CONSTRAINT post_pkey PRIMARY KEY (id )
 );
+
+CREATE INDEX post_idx ON post USING gin(to_tsvector('english', title||body||tags));
