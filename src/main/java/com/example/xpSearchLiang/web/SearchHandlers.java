@@ -19,9 +19,10 @@ import java.util.Map;
 @Singleton
 public class SearchHandlers {
 
-    public static final String sql = "select title,ts_headline(body, plainto_tsquery('%s'))   body, " +
-            "                ts_rank(to_tsvector(body||tags||title), plainto_tsquery('%s')) rank " +
-            "                from xpsearchliang_schema.post order by rank";
+    public static final String sql = "select title,ts_headline(body, plainto_tsquery('%s')) body " +
+            "    FROM xpsearchliang_schema.post " +
+            "    WHERE to_tsvector(body) @@ to_tsquery('%s')";
+
 
     @Inject
     DBManager dbManager;
