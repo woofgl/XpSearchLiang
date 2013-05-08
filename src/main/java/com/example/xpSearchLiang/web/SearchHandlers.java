@@ -44,6 +44,8 @@ public class SearchHandlers {
                 map.put("body", rs.getString("body"));
                 ls.add(map);
             }
+            rs.close();
+            ps.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
