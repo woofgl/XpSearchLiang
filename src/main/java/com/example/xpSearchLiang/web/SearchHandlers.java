@@ -3,10 +3,13 @@ package com.example.xpSearchLiang.web;
 import com.britesnow.snow.web.handler.annotation.WebModelHandler;
 import com.britesnow.snow.web.param.annotation.WebModel;
 import com.britesnow.snow.web.param.annotation.WebParam;
+import com.britesnow.snow.web.rest.annotation.WebGet;
 import com.example.xpSearchLiang.DBManager;
+import com.example.xpSearchLiang.utils.XmlReader;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,6 +32,9 @@ public class SearchHandlers {
 
     @Inject
     DBManager dbManager;
+
+    @Inject
+    XmlReader xmlReader;
 
 
     @WebModelHandler(startsWith="/search")
@@ -57,5 +63,21 @@ public class SearchHandlers {
         }
         m.put("results", ls);
         m.put("q", q);
+    }
+
+    @WebGet("/import")
+    public WebResponse importFile(@WebParam("includeComments") Boolean includeComments) {
+        //start from maven, cur dir should in project dir
+        String parent  = new File(".").getAbsoluteFile().getParent();
+        File importDir = new File(parent, "/tmp/imports");
+        for (File file : importDir.listFiles()) {
+            System.out.println(file.getName());
+            if(file.getName().equals("Posts.xml")){
+               xmlReader.importXml(file);
+            }else if(file.getName().equals("Comments.xml") && includeComments){
+                xmlReader.importXml(file);
+            }
+        }
+        return WebResponse.success();
     }
 }
