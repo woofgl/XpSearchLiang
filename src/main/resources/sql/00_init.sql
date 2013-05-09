@@ -9,7 +9,7 @@ CREATE TABLE post
   id bigint NOT NULL,
   acceptedanswerid bigint,
   answercount integer,
-  body character varying(10240),
+  body character varying(40960),
   commentcount integer,
   communityowneddate timestamp without time zone,
   creationdate timestamp without time zone,
@@ -32,7 +32,7 @@ CREATE TABLE comment
   id bigint NOT NULL,
   postId bigInt,
   score integer,
-  text character varying(10240),
+  text character varying(20480),
   CONSTRAINT comment_pkey PRIMARY KEY (id )
 );
 
