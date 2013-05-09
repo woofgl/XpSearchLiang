@@ -9,7 +9,7 @@ CREATE TABLE post
   id bigint NOT NULL,
   acceptedanswerid bigint,
   answercount integer,
-  body character varying(2048),
+  body character varying(10240),
   commentcount integer,
   communityowneddate timestamp without time zone,
   creationdate timestamp without time zone,
@@ -21,10 +21,19 @@ CREATE TABLE post
   parentid bigint,
   posttypeid bigint,
   score integer,
-  tags character varying(1024),
-  title character varying(1024),
+  tags character varying(2048),
+  title character varying(2048),
   viewcount integer,
   CONSTRAINT post_pkey PRIMARY KEY (id )
+);
+
+CREATE TABLE comment
+(
+  id bigint NOT NULL,
+  postId bigInt,
+  score integer,
+  text character varying(10240),
+  CONSTRAINT comment_pkey PRIMARY KEY (id )
 );
 
 CREATE INDEX post_idx ON post USING gin(to_tsvector('english', title||body||tags));
