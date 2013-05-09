@@ -1,63 +1,132 @@
 package com.example.xpSearchLiang.utils;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
+import com.example.xpSearchLiang.DBManager;
+import com.google.common.base.Strings;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.FileNotFoundException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
 
+@Singleton
 public final class XmlReader {
+    @Inject
+    private DBManager dbManager;
 
-
-    public static List<Map> readPosts() {
-        List<Map> list = new ArrayList<Map>();
+    public void importXml(File xml) {
+        FileInputStream input = null;
+        Connection conn=null;
         try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = null;
-            InputStream in = XmlReader.class.getResourceAsStream("/sql/posts.xml");
-            doc = db.parse(in);
-            
-            NodeList nList = doc.getElementsByTagName("row");
-            for(int i = 0; i< nList.getLength() ; i ++){
-                Element entityNode = (Element)nList.item(i);
-                Map post = new HashMap();
-                NamedNodeMap nameMap = entityNode.getAttributes();
-                for (int index=0,length = nameMap.getLength();index<length;index++) {
-                    String nodeName =  nameMap.item(index).getNodeName();
-                    String value =  nameMap.item(index).getNodeValue();
-                	if(nodeName.equals("Body")) {
-                        post.put(nodeName, value);
-                    }else if(nodeName.equals("Tag")){
-                        post.put(nodeName, value);
-                    }else if (nodeName.equals("Title")) {
-                        post.put(nodeName, value);
+            conn = dbManager.getConnection();
+            input = new FileInputStream(xml);
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            SAXParser saxParser = spf.newSAXParser();
+            MyDefaultHandle myDefaultHandle = new MyDefaultHandle(conn);
+            saxParser.parse(input, myDefaultHandle);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    //
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    //
+                }
+            }
+        }
+
+
+    }
+
+    private class MyDefaultHandle extends DefaultHandler {
+        private final Connection conn;
+        private Set<String> postSet = new HashSet<String>();
+        private Set<String> commentSet = new HashSet<String>();
+        String tableName = null;
+        String sql = "insert into xpsearchliang_schema.%s (%s) values (%s)";
+        StringBuilder fields = new StringBuilder();
+        StringBuilder values = new StringBuilder();
+        private MyDefaultHandle(Connection conn) {
+            postSet.add("Id");
+            postSet.add("Title");
+            postSet.add("Body");
+            postSet.add("Tags");
+            commentSet.add("Id");
+            commentSet.add("PostId");
+            commentSet.add("Text");
+            commentSet.add("Score");
+            this.conn = conn;
+        }
+
+        @Override
+        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+            String lname;
+            String value;
+            if (qName.equals("posts")) {
+                tableName = "post";
+            } else if (qName.equals("comments")) {
+                tableName = "comment";
+            } else if (qName.equals("row")) {
+                for (int i = 0; i <= attributes.getLength(); i++) {
+                    lname = attributes.getLocalName(i);
+                    value = attributes.getValue(i);
+                    if ((tableName.equals("post") && (postSet.contains(lname))) || (tableName.equals("comment") && (commentSet.contains(lname)))) {
+                        if (i != 0) {
+                            fields.append(",");
+                            values.append(",");
+                        }
+
+                        fields.append(lname);
+                        if (Strings.isNullOrEmpty(value)) {
+                            values.append("Null");
+                        } else {
+                            if(lname.contains("Id")||lname.equals("Score")){
+                                values.append(value);
+                            }else{
+                                values.append("'").append(value.replace("'","''")).append("'");
+                            }
+                        }
+
                     }
                 }
-                list.add(post);
+                Statement st = null;
+                try {
+                    //System.out.println(String.format(sql, tableName, fields, values));
+                    st = conn.createStatement();
+                    st.executeUpdate(String.format(sql, tableName, fields, values));
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    fields = new StringBuilder();
+                    values = new StringBuilder();
+                    if (st != null) {
+                        try {
+                            st.close();
+                        } catch (SQLException e) {
+                            //
+                        }
+                    }
+                }
+
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
         }
-        
-        return list;
     }
-    
 }
