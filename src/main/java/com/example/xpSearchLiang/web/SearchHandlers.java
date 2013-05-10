@@ -8,6 +8,7 @@ import com.example.xpSearchLiang.DBManager;
 import com.example.xpSearchLiang.utils.XmlReader;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 
 import java.io.File;
 import java.sql.Connection;
@@ -23,11 +24,10 @@ import java.util.Map;
 public class SearchHandlers {
 
 
-    public static final String sql = "select title,ts_headline(body, plainto_tsquery('%s'))   body, " +
-            "                ts_rank(to_tsvector(body||tags||title), plainto_tsquery('%s')) rank " +
+    public static final String sql = "select title,ts_headline(body, plainto_tsquery('%s'))   body " +
             "                from xpsearchliang_schema.post " +
             "                where to_tsvector(body) @@ to_tsquery('%s')" +
-            "                order by rank";
+            "                limit 10 offset 0";
 
 
     @Inject
@@ -35,6 +35,9 @@ public class SearchHandlers {
 
     @Inject
     XmlReader xmlReader;
+    @Inject
+    @Named("import.dir")
+    String importDirStr;
 
 
     @WebModelHandler(startsWith="/search")
@@ -42,7 +45,7 @@ public class SearchHandlers {
         Connection conn = dbManager.getConnection();
         List ls = new ArrayList();
         try {
-            PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q,q));
+            PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q));
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 Map map = new HashMap();
@@ -68,8 +71,7 @@ public class SearchHandlers {
     @WebGet("/import")
     public WebResponse importFile(@WebParam("includeComments") Boolean includeComments) {
         //start from maven, cur dir should in project dir
-        String parent  = new File(".").getAbsoluteFile().getParent();
-        File importDir = new File(parent, "/tmp/imports");
+        File importDir = new File(importDirStr);
         for (File file : importDir.listFiles()) {
             System.out.println(file.getName());
             if(file.getName().equals("Posts.xml")){
@@ -78,6 +80,7 @@ public class SearchHandlers {
                 xmlReader.importXml(file);
             }
         }
+        System.out.println("Done!");
         return WebResponse.success();
     }
 }
