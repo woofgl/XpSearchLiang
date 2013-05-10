@@ -8,6 +8,8 @@
   	[#list results as result]
   	[#if result.title??]
   	<h3 class="title">${result.title}</h3>
+    [#else ]
+        <h3 class="title">No Title</h3>
   	[/#if]
   	<div class="details">${result.body}</div>
   	[/#list]
