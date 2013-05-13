@@ -15,3 +15,8 @@
   	[/#list]
   <div>
 
+      [#if totalCount??]
+          [#import "/pager.ftl" as page]
+              [@page.pager pageNo=pageNo pageSize=pageSize recordCount=totalCount q=q toURL="/search"/]
+      [/#if]
+
