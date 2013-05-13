@@ -26,8 +26,11 @@ public class SearchHandlers {
 
     public static final String sql = "select title,ts_headline(body, plainto_tsquery('%s'))   body " +
             "                from xpsearchliang_schema.post " +
-            "                where to_tsvector(body) @@ to_tsquery('%s')" +
-            "                limit 10 offset 0";
+            "                where to_tsvector(body||title||tags) @@ to_tsquery('%s')" +
+            "                limit %s offset %s";
+    public static final String sqlCount = "select count(*) " +
+            "                from xpsearchliang_schema.post " +
+            "                where to_tsvector(body||title||tags) @@ to_tsquery('%s')" ;
 
 
     @Inject
@@ -41,13 +44,22 @@ public class SearchHandlers {
 
 
     @WebModelHandler(startsWith="/search")
-    public void search(@WebModel Map m, @WebParam("q")String q){
+    public void search(@WebModel Map m, @WebParam("q")String q, @WebParam("pageNo") Integer pageNo,@WebParam("pageSize") Integer pageSize ) {
+        if (pageNo == null) {
+            pageNo = 1;
+        }
+        if (pageSize == null) {
+            pageSize = 10;
+        }
+        int offset = (pageNo-1)*pageSize+1;
+        int totalCount = 0;
+
         Connection conn = dbManager.getConnection();
         List ls = new ArrayList();
         try {
-            PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q));
+            PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q, pageSize, offset));
             ResultSet rs = ps.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 Map map = new HashMap();
                 map.put("title", rs.getString("title"));
                 map.put("body", rs.getString("body"));
@@ -55,9 +67,14 @@ public class SearchHandlers {
             }
             rs.close();
             ps.close();
+            ps = conn.prepareStatement(String.format(sqlCount, q));
+            rs = ps.executeQuery();
+            if(rs.next()) {
+                totalCount = rs.getInt(1);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 conn.close();
             } catch (SQLException e) {
@@ -66,6 +83,9 @@ public class SearchHandlers {
         }
         m.put("results", ls);
         m.put("q", q);
+        m.put("totalCount", totalCount);
+        m.put("pageNo", pageNo);
+        m.put("pageSize", pageSize);
     }
 
     @WebGet("/import")
