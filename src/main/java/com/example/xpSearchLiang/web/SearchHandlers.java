@@ -26,11 +26,11 @@ public class SearchHandlers {
 
     public static final String sql = "select title,ts_headline(body, plainto_tsquery('%s'))   body " +
             "                from xpsearchliang_schema.post " +
-            "                where to_tsvector(body||title||tags) @@ to_tsquery('%s')" +
+            "                where tsv @@ to_tsquery('%s')" +
             "                limit %s offset %s";
     public static final String sqlCount = "select count(*) " +
             "                from xpsearchliang_schema.post " +
-            "                where to_tsvector(body||title||tags) @@ to_tsquery('%s')" ;
+            "                where tsv @@ to_tsquery('%s')" ;
 
 
     @Inject
