@@ -36,4 +36,28 @@ CREATE TABLE comment
   CONSTRAINT comment_pkey PRIMARY KEY (id )
 );
 
-CREATE INDEX post_idx ON post USING gin(to_tsvector('english', title||body||tags));
+CREATE TABLE users
+(
+  id bigint NOT NULL,
+  displayName char varying(256),
+  CONSTRAINT user_pkey PRIMARY KEY (id )
+);
+
+CREATE TABLE posthistory
+(
+  id bigint NOT NULL,
+  postHistoryTypeId int,
+  postId bigint not null,
+  userId bigint not null,
+  text char varying(10240),
+  CONSTRAINT posthistory_pkey PRIMARY KEY (id )
+);
+
+CREATE TABLE vote
+(
+  id bigint NOT NULL,
+  voteTypeId int,
+  postId bigint not null,
+  CONSTRAINT vote_pkey PRIMARY KEY (id )
+);
+
