@@ -60,19 +60,37 @@ public final class XmlReader {
         private final Connection conn;
         private Set<String> postSet = new HashSet<String>();
         private Set<String> commentSet = new HashSet<String>();
+        private Set<String> userSet = new HashSet<String>();
+        private Set<String> voteSet = new HashSet<String>();
+        private Set<String> posthistorySet = new HashSet<String>();
         String tableName = null;
         String sql = "insert into xpsearchliang_schema.%s (%s) values (%s)";
         StringBuilder fields = new StringBuilder();
         StringBuilder values = new StringBuilder();
         private MyDefaultHandle(Connection conn) {
+            //post
             postSet.add("Id");
             postSet.add("Title");
             postSet.add("Body");
             postSet.add("Tags");
+            //comment
             commentSet.add("Id");
             commentSet.add("PostId");
             commentSet.add("Text");
             commentSet.add("Score");
+            //user
+            userSet.add("Id");
+            userSet.add("DisplayName");
+            //vote
+            voteSet.add("Id");
+            voteSet.add("VoteTypeId");
+            voteSet.add("PostId");
+            //posthistory
+            posthistorySet.add("Id");
+            posthistorySet.add("PostHistoryTypeId");
+            posthistorySet.add("PostId");
+            posthistorySet.add("UserId");
+            posthistorySet.add("Text");
             this.conn = conn;
         }
 
@@ -84,11 +102,22 @@ public final class XmlReader {
                 tableName = "post";
             } else if (qName.equals("comments")) {
                 tableName = "comment";
+            } else if (qName.equals("votes")) {
+                tableName = "vote";
+            } else if (qName.equals("users")) {
+                tableName = "users";
+            } else if (qName.equals("posthistorys")) {
+                tableName = "posthistory";
             } else if (qName.equals("row")) {
                 for (int i = 0; i <= attributes.getLength(); i++) {
                     lname = attributes.getLocalName(i);
                     value = attributes.getValue(i);
-                    if ((tableName.equals("post") && (postSet.contains(lname))) || (tableName.equals("comment") && (commentSet.contains(lname)))) {
+                    if ((tableName.equals("post") && (postSet.contains(lname)))
+                            || (tableName.equals("comment") && (commentSet.contains(lname)))
+                            || (tableName.equals("users") && (userSet.contains(lname)))
+                            || (tableName.equals("vote") && (voteSet.contains(lname)))
+                            || (tableName.equals("posthistory") && (posthistorySet.contains(lname)))
+                            ) {
                         if (i != 0) {
                             fields.append(",");
                             values.append(",");
@@ -113,7 +142,8 @@ public final class XmlReader {
                     st = conn.createStatement();
                     st.executeUpdate(String.format(sql, tableName, fields, values));
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    System.out.println(String.format(sql, tableName, fields, values));
+
                 } finally {
                     fields = new StringBuilder();
                     values = new StringBuilder();
