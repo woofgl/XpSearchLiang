@@ -89,16 +89,12 @@ public class SearchHandlers {
     }
 
     @WebGet("/import")
-    public WebResponse importFile(@WebParam("includeComments") Boolean includeComments) {
+    public WebResponse importFile() {
         //start from maven, cur dir should in project dir
         File importDir = new File(importDirStr);
         for (File file : importDir.listFiles()) {
             System.out.println(file.getName());
-            if(file.getName().equals("Posts.xml")){
-               xmlReader.importXml(file);
-            }else if(file.getName().equals("Comments.xml") && includeComments){
-                xmlReader.importXml(file);
-            }
+            xmlReader.importXml(file);
         }
         System.out.println("Done!");
         return WebResponse.success();
