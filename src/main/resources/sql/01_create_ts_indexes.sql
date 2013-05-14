@@ -18,4 +18,4 @@ ALTER TABLE posthistory ADD COLUMN tsv tsvector;
 UPDATE posthistory SET tsv =
   setweight(to_tsvector(coalesce(text,'')), 'E');
 
-CREATE INDEX posthistory_tsv_idx ON post USING gin(tsv);
+CREATE INDEX posthistory_tsv_idx ON posthistory_tsv_idx USING gin(tsv);
