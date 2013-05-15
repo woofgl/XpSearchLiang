@@ -73,11 +73,13 @@ public final class XmlReader {
             postSet.add("Title");
             postSet.add("Body");
             postSet.add("Tags");
+            postSet.add("OwnerUserId");
             //comment
             commentSet.add("Id");
             commentSet.add("PostId");
             commentSet.add("Text");
             commentSet.add("Score");
+            commentSet.add("UserId");
             //user
             userSet.add("Id");
             userSet.add("DisplayName");
