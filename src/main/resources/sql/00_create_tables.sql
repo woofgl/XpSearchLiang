@@ -31,6 +31,7 @@ CREATE TABLE comment
 (
   id bigint NOT NULL,
   postId bigInt,
+  userId bigInt,
   score integer,
   text character varying(20480),
   CONSTRAINT comment_pkey PRIMARY KEY (id )

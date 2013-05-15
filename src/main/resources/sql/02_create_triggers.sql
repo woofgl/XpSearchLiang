@@ -25,3 +25,14 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE
 ON comment FOR EACH ROW EXECUTE PROCEDURE comment_trigger();
+
+CREATE FUNCTION users_trigger() RETURNS trigger AS $$
+begin
+  new.tsv :=
+     setweight(to_tsvector('english', coalesce(new.displayname,'')), 'E');
+  return new;
+end
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE
+ON users FOR EACH ROW EXECUTE PROCEDURE users_trigger();
