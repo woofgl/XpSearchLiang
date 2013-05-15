@@ -24,13 +24,25 @@ import java.util.Map;
 public class SearchHandlers {
 
 
-    public static final String sql = "select title,ts_headline(body, plainto_tsquery('%s'))   body " +
-            "                from xpsearchliang_schema.post " +
-            "                where tsv @@ to_tsquery('%s')" +
-            "                limit %s offset %s";
-    public static final String sqlCount = "select count(*) " +
-            "                from xpsearchliang_schema.post " +
-            "                where tsv @@ to_tsquery('%s')" ;
+    public static final String sql = "select distinct on (a.id,b.id, c.id, d.id) a.id, a.body, a.title, a.tags,b.text, c.displayName puser, d.displayname cuser  from xpsearchliang_schema.post a \n" +
+            "inner join  xpsearchliang_schema.comment b on a.id = b.postid" +
+            "inner join xpsearchliang_schema.users c on a.owneruserid = c.id" +
+            "inner join xpsearchliang_schema.users d on b.userId = d.id" +
+            "where a.tsv @@ to_tsquery('%s') " +
+            "      or b.tsv @@ to_tsquery('%s') " +
+            "      or c.tsv @@ to_tsquery('%s') " +
+            "      or c.tsv @@ to_tsquery('%s')" +
+            "limit %s offset %s";
+    public static final String sqlCount = "select count(*) from  ( " +
+            "select distinct on (a.id,b.id, c.id, d.id)  a.id,b.id, c.id, d.id from xpsearchliang_schema.post a " +
+            "inner join  xpsearchliang_schema.comment b on a.id = b.postid " +
+            "inner join xpsearchliang_schema.users c on a.owneruserid = c.id" +
+            "inner join xpsearchliang_schema.users d on b.userId = d.id" +
+            "where a.tsv @@ to_tsquery('%s') " +
+            "      or b.tsv @@ to_tsquery('%s') " +
+            "      or c.tsv @@ to_tsquery('%s') " +
+            "      or c.tsv @@ to_tsquery('%s')" +
+            "  ) as a" ;
 
 
     @Inject
@@ -51,23 +63,32 @@ public class SearchHandlers {
         if (pageSize == null) {
             pageSize = 10;
         }
+
+        if (q == null) {
+            q = "";
+        }
         int offset = (pageNo-1)*pageSize+1;
         int totalCount = 0;
 
         Connection conn = dbManager.getConnection();
         List ls = new ArrayList();
         try {
-            PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q, pageSize, offset));
+            PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q,q,q, pageSize, offset));
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Map map = new HashMap();
+                map.put("id", rs.getLong("id"));
                 map.put("title", rs.getString("title"));
                 map.put("body", rs.getString("body"));
+                map.put("tags", rs.getString("tags"));
+                map.put("text", rs.getString("text"));
+                map.put("puser", rs.getString("puser"));
+                map.put("cuser", rs.getString("cuser"));
                 ls.add(map);
             }
             rs.close();
             ps.close();
-            ps = conn.prepareStatement(String.format(sqlCount, q));
+            ps = conn.prepareStatement(String.format(sqlCount, q,q,q,q));
             rs = ps.executeQuery();
             if(rs.next()) {
                 totalCount = rs.getInt(1);

@@ -29,7 +29,7 @@ ON comment FOR EACH ROW EXECUTE PROCEDURE comment_trigger();
 CREATE FUNCTION users_trigger() RETURNS trigger AS $$
 begin
   new.tsv :=
-     setweight(to_tsvector('english', coalesce(new.displayname,'')), 'E');
+     setweight(to_tsvector('english', coalesce(new.displayname,'')), 'D');
   return new;
 end
 $$ LANGUAGE plpgsql;
