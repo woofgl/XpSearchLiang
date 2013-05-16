@@ -1,0 +1,27 @@
+<script id="Search" type="text/html">
+    <div class="Search">
+        <div class="searchForm">
+            <div class="form-inline" >
+                <input type="text" placeholder="search keywords" name="q" class="searchInput" />
+                <button value="Search" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+        <div class="results">
+
+        </div>
+    </div>
+
+</script>
+
+<script id="Search-result" type="text/html">
+  {{#if results}}
+    {{#each results}}
+      {{#if title}}
+          <h3 class="title">{{title}}</h3>
+      {{else }}
+          <h3 class="title">No Title</h3>
+      {{/if}}
+        <div class="details">{{body}}</div>
+    {{/each}}
+  {{/if}}
+</script>

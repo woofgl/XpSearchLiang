@@ -1,0 +1,37 @@
+// Core variables and mixins
+@import "mixins.less";
+
+.Search {
+
+  .fitparent();
+    height: 65px;
+    background: #F1F1F1;
+    border: 1px solid rgb(176, 171, 180);
+
+  .searchForm {
+    padding-top: 20px;
+    padding-left: 150px;
+
+  }
+
+  .searchForm input[type='text']{
+    width: 640px;
+    margin-right: 20px;
+  }
+
+  .results {
+    padding-left: 150px;
+  }
+
+  .results h3.title {
+    font-family: verdana, arial, helvetica, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    height: 20px;
+
+  }
+  .results div.details {
+    font-size: 12px;
+  }
+
+}

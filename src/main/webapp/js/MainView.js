@@ -17,9 +17,16 @@
             },
             events: {
                 "click; button.import":function(){
+                    console.log("import");
                     app.api.import().done(function(data) {
                         console.log("import success");
                     })
+                    return false;
+                },
+                "click; button.search":function(event){
+                    var view = this;
+                    var q = view.$el.find("input[type='text']").val();
+                    brite.display("Search", ".MainView-content", {q: q});
                     return false;
                 }
 
