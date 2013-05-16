@@ -55,8 +55,8 @@ public class SearchHandlers {
     String importDirStr;
 
 
-    @WebModelHandler(startsWith="/search")
-    public void search(@WebModel Map m, @WebParam("q")String q, @WebParam("pageNo") Integer pageNo,@WebParam("pageSize") Integer pageSize ) {
+    @WebGet("/api/search")
+    public WebResponse search(@WebParam("q")String q, @WebParam("pageNo") Integer pageNo,@WebParam("pageSize") Integer pageSize ) {
         if (pageNo == null) {
             pageNo = 1;
         }
@@ -103,14 +103,20 @@ public class SearchHandlers {
                 //
             }
         }
+        Map m = new HashMap();
         m.put("results", ls);
         m.put("q", q);
         m.put("totalCount", totalCount);
         m.put("pageNo", pageNo);
         m.put("pageSize", pageSize);
+        return WebResponse.success(m);
+    }
+    @WebModelHandler(startsWith="/contactCluster")
+    public void contactCluster(@WebModel Map m) {
+
     }
 
-    @WebGet("/import")
+    @WebGet("/api/import")
     public WebResponse importFile() {
         //start from maven, cur dir should in project dir
         File importDir = new File(importDirStr);
