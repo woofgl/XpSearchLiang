@@ -1,0 +1,40 @@
+// Core variables and mixins
+@import "mixins.less";
+
+.MainView {
+   .fitparent();
+    text-align: center ;
+
+  .topBarContainer{
+      .fitparent();
+      top: 0px;
+      height:50px;
+    }
+
+  .MainView-content{
+    position: relative;
+    margin-top: 50px;
+    border: 2px;
+
+    .index {
+      .searchForm{
+        margin-top: 30px;
+        background: #FFFFFF;
+        border:none
+      }
+
+      .searchForm input[type='text'] {
+        width: 570px;
+      }
+
+
+
+      h2{
+        margin-top: 200px;
+        font-size: 20px;
+      }
+    }
+  }
+
+
+}
