@@ -108,7 +108,7 @@ public final class XmlReader {
                 tableName = "vote";
             } else if (qName.equals("users")) {
                 tableName = "users";
-            } else if (qName.equals("posthistorys")) {
+            } else if (qName.equals("posthistory")) {
                 tableName = "posthistory";
             } else if (qName.equals("row")) {
                 for (int i = 0; i <= attributes.getLength(); i++) {
