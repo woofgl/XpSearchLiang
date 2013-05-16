@@ -1,28 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Full Text Search Demo</title>
 
-<section id="indexPage" class="content">
-    <h2>PostgreSql Full Text Search Demo</h2>
-
-    <form class="form-horizontal searchForm" action="search" >
-        <div class="control-group">
-            <div class="controls">
-                <input type="text" name="q" placeholder="search keywords">
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="controls">
-                <button type="submit" class="btn">Search</button>
-                <button class="btn import">Import</button>
-            </div>
-        </div>
-    </form>
-
+    <link rel="stylesheet" type="text/css" href="${_r.contextPath}/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="${_r.contextPath}/css/main.css">
+[@webBundle path="/css/" type="css" /]
     <script type="text/javascript">
-        $("#indexPage").on("click",  "button.import", function(event) {
-            $.get("import", function(data){
-                console.log("import success");
-            })
-            return false;
+        var contextPath = "${_r.contextPath}";
+    </script>
+[@webBundle path="/js/" type="js" /]
+    <script type="text/javascript">
+        $(function () {
+           brite.display("MainView");
         });
     </script>
-
-</section>
+</head>
+<body>
+</body>
+</html>
