@@ -25,20 +25,20 @@ public class SearchHandlers {
 
 
     public static final String sql = "select distinct on (a.id,b.id, c.id, d.id) a.id, a.body, a.title, a.tags,b.text, c.displayName puser, d.displayname cuser  from xpsearchliang_schema.post a \n" +
-            "inner join  xpsearchliang_schema.comment b on a.id = b.postid" +
-            "inner join xpsearchliang_schema.users c on a.owneruserid = c.id" +
-            "inner join xpsearchliang_schema.users d on b.userId = d.id" +
-            "where a.tsv @@ to_tsquery('%s') " +
+            " inner join  xpsearchliang_schema.comment b on a.id = b.postid" +
+            " inner join xpsearchliang_schema.users c on a.owneruserid = c.id" +
+            " inner join xpsearchliang_schema.users d on b.userId = d.id" +
+            " where a.tsv @@ to_tsquery('%s') " +
             "      or b.tsv @@ to_tsquery('%s') " +
             "      or c.tsv @@ to_tsquery('%s') " +
             "      or c.tsv @@ to_tsquery('%s')" +
-            "limit %s offset %s";
+            " limit %s offset %s";
     public static final String sqlCount = "select count(*) from  ( " +
             "select distinct on (a.id,b.id, c.id, d.id)  a.id,b.id, c.id, d.id from xpsearchliang_schema.post a " +
-            "inner join  xpsearchliang_schema.comment b on a.id = b.postid " +
-            "inner join xpsearchliang_schema.users c on a.owneruserid = c.id" +
-            "inner join xpsearchliang_schema.users d on b.userId = d.id" +
-            "where a.tsv @@ to_tsquery('%s') " +
+            " inner join  xpsearchliang_schema.comment b on a.id = b.postid " +
+            " inner join xpsearchliang_schema.users c on a.owneruserid = c.id" +
+            " inner join xpsearchliang_schema.users d on b.userId = d.id" +
+            " where a.tsv @@ to_tsquery('%s') " +
             "      or b.tsv @@ to_tsquery('%s') " +
             "      or c.tsv @@ to_tsquery('%s') " +
             "      or c.tsv @@ to_tsquery('%s')" +
@@ -74,6 +74,7 @@ public class SearchHandlers {
         List ls = new ArrayList();
         try {
             PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q,q,q, pageSize, offset));
+            System.out.println(String.format(sql, q, q,q,q, pageSize, offset));
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Map map = new HashMap();
