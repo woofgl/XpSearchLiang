@@ -157,6 +157,13 @@
 
     });
 
+    Handlebars.registerHelper("decode", function(data){
+        return $('<textarea />').html(data).val();
+
+    });
+
+
+
     Handlebars.registerHelper("each_with_index", function(array, options) {
         var buffer = "";
         console.log(array)
