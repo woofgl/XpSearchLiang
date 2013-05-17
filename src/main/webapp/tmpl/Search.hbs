@@ -21,7 +21,7 @@
       {{else }}
           <h3 class="title">No Title</h3>
       {{/if}}
-        <div class="details">{{body}}</div>
+        <div class="details">{{#decode body}}{{/decode}}</div>
     {{/each}}
   {{/if}}
 </script>

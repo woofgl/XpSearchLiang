@@ -13,6 +13,7 @@
             },
 
             postDisplay: function (data) {
+                data = data||{};
                 var view = this;
                 search.call(view, data);
             },
@@ -20,6 +21,7 @@
                 "click; .searchForm .btn":function(event) {
                      var view = this;
                     var q = view.$el.find("input[type='text']").val();
+                    console.log(q);
                     search.call(view, {q: q});
                     return false;
                 }
