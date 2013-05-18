@@ -3,7 +3,7 @@
     (function ($) {
         brite.registerView("ReportHeader",  {parent:".ContactCluster-header"}, {
             create:function (data, config) {
-                var $html = app.render("tmpl-ReportHeader");
+                var $html = app.render("ReportHeader");
                	var $e = $($html);
                 return $e;
             },

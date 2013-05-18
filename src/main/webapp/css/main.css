@@ -1,0 +1,19 @@
+/* TODO: You should clear this css and make it your own (this is not a boostrap css, just a css
+ *       to support the quickstart index page.
+ *
+ * NOTE: For advanced application, we recommend going with Twitter Bootstrap and lesscss (Snow has
+ * builtin it support for less)
+ */
+
+body{
+  height: 100%;
+  min-height: 600px;
+  background: #FFFFFF;
+}
+
+.pagination {padding: 5px;float:right;font-size:12px;}
+.pagination a, .pagination a:link, .pagination a:visited {padding:2px 5px;margin:2px;border:1px solid #aaaadd;text-decoration:none;color:#006699;}
+.pagination a:hover, .pagination a:active {border: 1px solid #ff0000;color: #000;text-decoration: none;}
+.pagination span.current {padding: 2px 5px;margin: 2px;border: 1px solid #ff0000;font-weight: bold;background-color: #ff0000;color: #FFF;}
+.pagination span.disabled {padding: 2px 5px;margin: 2px;border: 1px solid #eee; color: #ddd;}
+

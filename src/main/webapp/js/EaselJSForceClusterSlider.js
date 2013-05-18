@@ -5,12 +5,13 @@
     	var _centerColors = ["#ffe9c2","#0B95B1","#ff7f0e","#aec7e8","#dddddd"];
     	var _weightPerLength = [20,10,8,4];
     	var _baseLineLen = [80,40,20,10];
+
         brite.registerView("EaselJSForceClusterSlider",  {
 			emptyParent : true,
 			parent:".ContactCluster-main"
 		}, {
         	create:function (data, config) {
-                var $html = app.render("tmpl-EaselJSForceClusterSlider",{});
+                var $html = app.render("EaselJSForceClusterSlider",{});
                	var $e = $($html);
                 return $e;
             },
@@ -20,19 +21,14 @@
                 view.level = $(".ControlBar #sl1").val();
                	var scaleVal = $(".ControlBar #sl2").val();
               	view.scaleVal = scaleVal/100;
-              	var user_id = 0 , user_name = "";
-              	app.getLogUser({}).pipe(function(user){
-             	   user_id = user.result.id;
-             	   user_name = user.result.fullName;
-             	   app.Api.getContacts({opts:JSON.stringify({match: {source: "Google"}})}).pipe(function(contacts){
-             		   var friends = new Array(); 
-                		$.each(contacts,function(i,k){
-                			friends.push({"parentId":user_id,"id": k.contact.id,"name":(k.contact.fullName||k.contact.email),"weight":5});
-                		});
-                		var chartData = [{"id":user.result.id,"name":user.result.fullName,"children":friends}];
+              	var user_id = 3 , user_name = "Michael Paulukon";
+
+             	   app.Api.getUserrel(user_id).pipe(function(result){
+                        console.log(result)
+                		var chartData = [{"id":user_id,"name":user_name,"children":result.result}];
                 		view.showView(chartData[0]);
                    });
-                });
+
               	/* app.ContactDao.get().done(function(chartData){
               		 console.log(chartData);
                    	view.showView(chartData);

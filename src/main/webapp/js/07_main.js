@@ -1,5 +1,8 @@
 // global namespace
 var app = app || {};
+app.useRAF = true;
+app.animation = "tween";
+
 
 // --------- Render Function --------- //
 // Just a little indirection to render a template using handlebars.

@@ -1,9 +1,9 @@
 ;(function() {
     
     (function ($) {
-        brite.registerView("ContactCluster",  {emptyParent : true}, {
+        brite.registerView("ContactCluster",   {parent:".MainView-content", emptyParent: true}, {
             create:function (data, config) {
-                var $html = app.render("tmpl-ContactCluster");
+                var $html = app.render("ContactCluster");
                 var $e = $($html);
                 return $e;
             },
