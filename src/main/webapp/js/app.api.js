@@ -14,6 +14,14 @@ var app = app||{};
             return app.getJsonData(contextPath+"/api/import",opts).pipe(function(data){
                 return data;
             });
+        },
+        getUserrel:function(userId){
+            var opts={};
+            opts.method = 'Get';
+            opts.userId = userId;
+            return app.getJsonData(contextPath+"/api/getUserRel",opts).pipe(function(data){
+                return data;
+            });
         }
     }
 })();

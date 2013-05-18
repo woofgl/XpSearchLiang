@@ -42,7 +42,7 @@ public class SearchHandlers {
             "      or b.tsv @@ to_tsquery('%s') " +
             "      or c.tsv @@ to_tsquery('%s') " +
             "      or c.tsv @@ to_tsquery('%s')" +
-            "  ) as a" ;
+            "  ) as a";
 
 
     @Inject
@@ -56,7 +56,7 @@ public class SearchHandlers {
 
 
     @WebGet("/api/search")
-    public WebResponse search(@WebParam("q")String q, @WebParam("pageNo") Integer pageNo,@WebParam("pageSize") Integer pageSize ) {
+    public WebResponse search(@WebParam("q") String q, @WebParam("pageNo") Integer pageNo, @WebParam("pageSize") Integer pageSize) {
         if (pageNo == null) {
             pageNo = 1;
         }
@@ -67,14 +67,14 @@ public class SearchHandlers {
         if (q == null) {
             q = "";
         }
-        int offset = (pageNo-1)*pageSize+1;
+        int offset = (pageNo - 1) * pageSize + 1;
         int totalCount = 0;
 
         Connection conn = dbManager.getConnection();
         List ls = new ArrayList();
         try {
-            PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q,q,q, pageSize, offset));
-            System.out.println(String.format(sql, q, q,q,q, pageSize, offset));
+            PreparedStatement ps = conn.prepareStatement(String.format(sql, q, q, q, q, pageSize, offset));
+//            System.out.println(String.format(sql, q, q, q, q, pageSize, offset));
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Map map = new HashMap();
@@ -89,9 +89,9 @@ public class SearchHandlers {
             }
             rs.close();
             ps.close();
-            ps = conn.prepareStatement(String.format(sqlCount, q,q,q,q));
+            ps = conn.prepareStatement(String.format(sqlCount, q, q, q, q));
             rs = ps.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 totalCount = rs.getInt(1);
             }
         } catch (SQLException e) {
@@ -111,7 +111,8 @@ public class SearchHandlers {
         m.put("pageSize", pageSize);
         return WebResponse.success(m);
     }
-    @WebModelHandler(startsWith="/contactCluster")
+
+    @WebModelHandler(startsWith = "/contactCluster")
     public void contactCluster(@WebModel Map m) {
 
     }
@@ -126,5 +127,40 @@ public class SearchHandlers {
         }
         System.out.println("Done!");
         return WebResponse.success();
+    }
+
+    @WebGet("/api/getUserRel")
+    public WebResponse getUserRel(@WebParam("userId") Long userId) {
+        String sql = "select a.id, a.displayname from xpsearchliang_schema.users a " +
+                "inner join xpsearchliang_schema.userreluser b on a.id = b.relid " +
+                "where b.userid = %s and b.relid <> %s";
+        List ls = new ArrayList();
+        Connection conn = dbManager.getConnection();
+        try {
+
+            PreparedStatement ps = conn.prepareStatement(String.format(sql, userId, userId));
+//            System.out.println(String.format(sql, q, q, q, q, pageSize, offset));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map map = new HashMap();
+                map.put("parentId", userId);
+                map.put("id", rs.getLong("id"));
+                map.put("name", rs.getString("displayname"));
+                map.put("weight", 5);
+
+                ls.add(map);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                //
+            }
+        }
+        return WebResponse.success(ls);
     }
 }
