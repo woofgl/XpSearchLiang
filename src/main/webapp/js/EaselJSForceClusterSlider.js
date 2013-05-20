@@ -5,6 +5,8 @@
     	var _centerColors = ["#ffe9c2","#0B95B1","#ff7f0e","#aec7e8","#dddddd"];
     	var _weightPerLength = [20,10,8,4];
     	var _baseLineLen = [80,40,20,10];
+        //because now, not user login, so use fixed user id;
+        var user_id = 100 , user_name = "Strozykowski";
 
         brite.registerView("EaselJSForceClusterSlider",  {
 			emptyParent : true,
@@ -21,27 +23,14 @@
                 view.level = $(".ControlBar #sl1").val();
                	var scaleVal = $(".ControlBar #sl2").val();
               	view.scaleVal = scaleVal/100;
-              	var user_id = 3 , user_name = "Michael Paulukon";
+                view.showView({"id":user_id,"name":user_name});
 
-             	   app.Api.getUserrel(user_id).pipe(function(result){
-                        console.log(result)
-                		var chartData = [{"id":user_id,"name":user_name,"children":result.result}];
-                		view.showView(chartData[0]);
-                   });
-
-              	/* app.ContactDao.get().done(function(chartData){
-              		 console.log(chartData);
-                   	view.showView(chartData);
-   				 });*/
-				
 			},
 			docEvents: {
 				"DO_SET_LEVEL": function(event,extra){
 					var view = this;
 					view.level = extra.level;
-	                app.ContactDao.getByName(view.rootName).done(function(chartData){
-		                view.showView(chartData);
-					});
+		            view.showView({"id":user_id,"name":user_name});
 				},
 				"DO_SET_ZOOM": function(event,extra){
 					var view = this;
@@ -51,14 +40,6 @@
 				"DO_SET_RAF": function(event,extra){
 					createjs.Ticker.useRAF = app.useRAF;
 					createjs.Ticker.setFPS(60);
-				}
-			},
-			daoEvents: {
-				"dataChange; Contact": function(){
-					var view = this;
-					app.ContactDao.get().done(function(chartData){
-	                	view.showView(chartData);
-					});
 				}
 			},
            	showView:function (data) {
@@ -88,101 +69,123 @@
 				var stage = new createjs.Stage(canvas);
 				view.stage = stage;
 				stage.enableMouseOver(100);
-				var container = createContainer.call(view, data, view.originPoint, view.level, 0);
-				container.name = view.currentContainerName;
-				container.alpha = 1;
-				stage.addChild(container);
-      			stage.update();
+				var containerDfd = createContainer.call(view, data, view.originPoint, view.level, 0);
+                containerDfd.done(function(container){
+                    container.name = view.currentContainerName;
+                    container.alpha = 1;
+                    stage.addChild(container);
+                    stage.update();
+                });
+
 			}
         });
         
         // --------- Private Method --------- //
-        	function createContainer(data, originPoint, level, exAngle, isRecreate){
-        		console.log(data);
-        		var view = this;
-        		var parentName = data.name;
-      			//sort the weight
-				var childrenData = data.children;
-				childrenData.sort(weightSort);
-				
-				//put the root data as the first one
-				childrenData = app.transformDataFirst(childrenData,isRecreate?view.oldRootName:view.rootName);
-				
-      			var stage = view.stage;
-      			var angle = Math.PI * 2 / childrenData.length ;
-      			var rx = originPoint.x;
-				var ry = originPoint.y;
-     			var containerRoot = new createjs.Container();
-     			
-     			var fpos = calculateNodePosition.call(view,childrenData,originPoint,level,exAngle);
-			    
-        		//draw the nodes and line
-        		$.each(childrenData,function(i,item){
-        			if(level != view.level && i == 0) return;
-        			var cx = fpos[i].x;
-			        var cy = fpos[i].y;
-			        var cData = childrenData[i];
-			        
-			        var line = createLine.call(view,rx,ry,cx,cy,level);
-			        var node = createNodeCircle.call(view,cx,cy,cData.name,level);
-			        containerRoot.addChild(line);
-			        containerRoot.addChild(node);
-			        node.originPotint = {cx:cx,cy:cy};
-			        node.relatedLine = line;
-			        node.angleVal = fpos[i].angleVal;
-			        node.weight = cData.weight;
-			        
-			        //add the mouseover event for node
-			        node.addEventListener("mouseover", function(d){mouseoverEvent.call(view,d)});
-			        
-			        //add the mouseout event for node
-			        node.addEventListener("mouseout", function(d){mouseoutEvent.call(view,d)});
-			        
-			        //add the mousedown event for node
-			        node.addEventListener("mousedown", function(d){mousedownEvent.call(view,d)});
-			        
-			       	//add the click event for node
-					node.addEventListener("click", function(d){clickEvent.call(view,d)});
+        function createContainer(data, originPoint, level, exAngle, isRecreate) {
+            console.log("lvele=" + level);
+            var dfd = $.Deferred();
 
-			        //show the label
-			        if((view.level-level) <= 1){
-			        	var text = createText.call(view,cx,cy, cData.name);
-			        	node.relatedText = text;
-			        	text.originPotint = {x:cx - 10,y:cy + 10};
-			        	containerRoot.addChild(text);
-			        }
-			        
-			        //show the children level
-					if((level-1) > 0){
-						var newData = app.transformData(app.dataSet, cData.name, parentName);
-						var newContainer = createContainer.call(view, newData, {x:cx, y:cy}, level-1, (Math.PI + angle* i)+exAngle);
-						node.relatedContainer = newContainer;
-						containerRoot.addChild(newContainer);
-					}
-				});
-				
-				//draw the origin point
-				var circle = createCenterCircle.call(view,rx, ry, view.cName,level);
-				circle.children = childrenData.length;
-			    containerRoot.addChild(circle);
-					
-				if((view.level-level) == 0){
-					 //add the click event for circle
-			    	circle.addEventListener("click", function(d){clickOriginPointEvent.call(view,d)});
-			    
-				    var text = createText.call(view,rx,ry, parentName);
-	      			containerRoot.addChild(text); 
-	      			
-	      			containerRoot.scaleX = view.scaleVal; 
-					containerRoot.scaleY = view.scaleVal; 
-					containerRoot.x = (1-view.scaleVal) * view.originPoint.x; 
-					containerRoot.y = (1-view.scaleVal) * view.originPoint.y; 
-				}
-			    
-			    return containerRoot;
-        	}
-        	
-        	function calculateNodePosition(childrenData,originPoint,level,exAngle){
+            var view = this;
+            var parentName = data.name;
+            //sort the weight
+            //var childrenData = data.children;
+            getChildren(data).done(function (childrenData) {
+//                console.log(childrenData);
+                childrenData.sort(weightSort);
+
+                //put the root data as the first one
+                childrenData = app.transformDataFirst(childrenData, isRecreate ? view.oldRootName : view.rootName);
+
+                var stage = view.stage;
+                var angle = Math.PI * 2 / childrenData.length;
+                var rx = originPoint.x;
+                var ry = originPoint.y;
+                var containerRoot = new createjs.Container();
+
+                var fpos = calculateNodePosition.call(view, childrenData, originPoint, level, exAngle);
+
+                //draw the nodes and line
+                $.each(childrenData, function (i, item) {
+                    if (level != view.level && i == 0) return;
+                    var cx = fpos[i].x;
+                    var cy = fpos[i].y;
+                    var cData = childrenData[i];
+
+                    var line = createLine.call(view, rx, ry, cx, cy, level);
+                    var node = createNodeCircle.call(view, cx, cy, cData.name, level, cData.id);
+                    containerRoot.addChild(line);
+                    containerRoot.addChild(node);
+                    node.originPotint = {cx: cx, cy: cy};
+                    node.relatedLine = line;
+                    node.angleVal = fpos[i].angleVal;
+                    node.weight = cData.weight;
+
+                    //add the mouseover event for node
+                    node.addEventListener("mouseover", function (d) {
+                        mouseoverEvent.call(view, d)
+                    });
+
+                    //add the mouseout event for node
+                    node.addEventListener("mouseout", function (d) {
+                        mouseoutEvent.call(view, d)
+                    });
+
+                    //add the mousedown event for node
+                    node.addEventListener("mousedown", function (d) {
+                        mousedownEvent.call(view, d)
+                    });
+
+                    //add the click event for node
+                    node.addEventListener("click", function (d) {
+                        clickEvent.call(view, d)
+                    });
+
+                    //show the label
+                    if ((view.level - level) <= 1) {
+                        var text = createText.call(view, cx, cy, cData.name);
+                        node.relatedText = text;
+                        text.originPotint = {x: cx - 10, y: cy + 10};
+                        containerRoot.addChild(text);
+                    }
+
+                    //show the children level
+                    if ((level - 1) > 0) {
+                        createContainer.call(view, cData, {x: cx, y: cy}, level - 1, (Math.PI + angle * i) + exAngle).done(function(newContainer){
+                            node.relatedContainer = newContainer;
+                            containerRoot.addChild(newContainer);
+                            stage.update();
+                        });
+
+                    }
+                });
+
+                //draw the origin point
+                var circle = createCenterCircle.call(view, rx, ry, view.cName, level);
+                circle.children = childrenData.length;
+                containerRoot.addChild(circle);
+
+                if ((view.level - level) == 0) {
+                    //add the click event for circle
+                    circle.addEventListener("click", function (d) {
+                        clickOriginPointEvent.call(view, d)
+                    });
+
+                    var text = createText.call(view, rx, ry, parentName);
+                    containerRoot.addChild(text);
+
+                    containerRoot.scaleX = view.scaleVal;
+                    containerRoot.scaleY = view.scaleVal;
+                    containerRoot.x = (1 - view.scaleVal) * view.originPoint.x;
+                    containerRoot.y = (1 - view.scaleVal) * view.originPoint.y;
+                }
+                dfd.resolve(containerRoot);
+            });
+
+
+            return dfd.promise();
+        }
+
+        function calculateNodePosition(childrenData,originPoint,level,exAngle){
         		var view = this;
         		var rx = originPoint.x;
 				var ry = originPoint.y;
@@ -217,7 +220,7 @@
 				stage.update();
 			}
         	
-        	function createNodeCircle(cx,cy,cName,level){
+        	function createNodeCircle(cx,cy,cName,level, uid){
         		var view = this;
 		      	var r = 5;
 		    	var color = _colors[view.level - level];
@@ -227,6 +230,7 @@
 		      		circle.x = cx;
 			        circle.y = cy;
 			        circle.name = cName;
+			        circle.uid = uid;
 		      	return circle;
 		    }
 		    
@@ -240,6 +244,7 @@
 		      		circle.x = cx;
 			        circle.y = cy;
 			        circle.name = cName
+
 		      	return circle;
 		    }
 		    
@@ -264,6 +269,7 @@
 		    }
 		    
 		    function clickEvent(d){
+                console.log(d);
 		    	var view = this;
 		    	if(view.mousemove) return;
 		    	
@@ -281,54 +287,53 @@
 			    var oldCenterCircle = statLayout.getChildByName(view.cName);
 			    statLayout.removeChild(oldCenterCircle);
 			        
-			    var newCircle = new createjs.Shape();
 			    var newCircle = createCenterCircle.call(view, d.target.x, d.target.y, view.cName, view.level);
       			statLayout.addChild(newCircle);
       				
       			statLayout.removeChild(d.target);
-      			var node = createNodeCircle.call(view,rx,ry,view.cName,view.level);
+      			var node = createNodeCircle.call(view,rx,ry,view.cName,view.level, d.target.uid);
       			statLayout.addChild(node);
-      			
-      			app.ContactDao.getByName(d.target.name).done(function(userData){
+
 					//add new container
-					var newContainer = createContainer.call(view, userData, {x:view.canvasW/2, y: view.canvasH/2}, view.level, (Math.PI+d.target.angleVal),true);
-					    newContainer.name = view.newContainerName;
-					    newContainer.x = newContainer.x + (d.target.x - rx)*view.scaleVal;
-					    newContainer.y = newContainer.y + (d.target.y - ry)*view.scaleVal;
-					    newContainer.alpha = 0;
-					stage.addChild(newContainer);
-					    
-					stage.update();
-					    
-					createjs.CSSPlugin.install();
-					var $contactInfo = view.$el.find(".contact-info");
-				   	if($contactInfo.find("span").size() > 0){
-				   		var leftVal = $contactInfo.position().left - (d.target.x - rx);
-				   		var topVal = $contactInfo.position().top - (d.target.y - ry);
-				   		createjs.Tween.get($contactInfo[0]).to({opacity : 0.1, left : leftVal, top : topVal }, app.animationSpeed,createjs.Ease.quartInOut).call(function(){
-				   			$contactInfo.empty();
-				   		});
-				   	}
-					      	
-					var ox = statLayout.x - (d.target.x - rx);
-					var oy = statLayout.y - (d.target.y - ry);
-					      	
-					createjs.Tween.get(statLayout).to({alpha : 0, x : ox, y : oy }, app.animationSpeed,createjs.Ease.quartInOut); 
-					     	
-					createjs.Tween.get(newContainer).to({alpha : 1, x : (1-view.scaleVal)*view.originPoint.x, y : (1-view.scaleVal)*view.originPoint.y}, app.animationSpeed,createjs.Ease.quartInOut).call(function() {
-					    createjs.Ticker.removeEventListener("tick",stage);
-					    //remove oldContainer
-						newContainer.x = (1-view.scaleVal)*view.originPoint.x;
-						newContainer.y = (1-view.scaleVal)*view.originPoint.y;
-						stage.removeChild(statLayout);
-						newContainer.name = view.currentContainerName;
-						newContainer.alpha = 1;
-						stage.update();
-					}); 
-						
-	      			createjs.Ticker.addEventListener("tick", stage);
-					    
-				});		
+					createContainer.call(view, {id: d.target.uid, name: d.target.name}, {x:view.canvasW/2, y: view.canvasH/2}, view.level, (Math.PI+d.target.angleVal),true).done(function (newContainer) {
+
+                        newContainer.name = view.newContainerName;
+                        newContainer.x = newContainer.x + (d.target.x - rx) * view.scaleVal;
+                        newContainer.y = newContainer.y + (d.target.y - ry) * view.scaleVal;
+                        newContainer.alpha = 0;
+                        stage.addChild(newContainer);
+
+                        stage.update();
+
+                        createjs.CSSPlugin.install();
+                        var $contactInfo = view.$el.find(".contact-info");
+                        if ($contactInfo.find("span").size() > 0) {
+                            var leftVal = $contactInfo.position().left - (d.target.x - rx);
+                            var topVal = $contactInfo.position().top - (d.target.y - ry);
+                            createjs.Tween.get($contactInfo[0]).to({opacity: 0.1, left: leftVal, top: topVal }, app.animationSpeed, createjs.Ease.quartInOut).call(function () {
+                                $contactInfo.empty();
+                            });
+                        }
+
+                        var ox = statLayout.x - (d.target.x - rx);
+                        var oy = statLayout.y - (d.target.y - ry);
+
+                        createjs.Tween.get(statLayout).to({alpha: 0, x: ox, y: oy }, app.animationSpeed, createjs.Ease.quartInOut);
+
+                        createjs.Tween.get(newContainer).to({alpha: 1, x: (1 - view.scaleVal) * view.originPoint.x, y: (1 - view.scaleVal) * view.originPoint.y}, app.animationSpeed, createjs.Ease.quartInOut).call(function () {
+                            createjs.Ticker.removeEventListener("tick", stage);
+                            //remove oldContainer
+                            newContainer.x = (1 - view.scaleVal) * view.originPoint.x;
+                            newContainer.y = (1 - view.scaleVal) * view.originPoint.y;
+                            stage.removeChild(statLayout);
+                            newContainer.name = view.currentContainerName;
+                            newContainer.alpha = 1;
+                            stage.update();
+                        });
+
+                        createjs.Ticker.addEventListener("tick", stage);
+
+                    });
 			}
 			    
 			function clickOriginPointEvent(d){
@@ -447,6 +452,19 @@
 			function weightSort(a,b){
 				return a.weight>b.weight ? 1 :-1;
 			}
+
+            function getChildren(data){
+                var dfd = $.Deferred();
+                if(data.children){
+                    dfd.resolve(data.children);
+                }else{
+                    app.Api.getUserrel(data.id).done(function(result){
+                        data.children = result.result;
+                        dfd.resolve(data.children);
+                    });
+                }
+                return dfd.promise();
+            }
 		// --------- /Private Method --------- //
 
     })(jQuery);
