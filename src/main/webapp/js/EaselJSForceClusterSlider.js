@@ -39,7 +39,7 @@
 				"DO_SET_LEVEL": function(event,extra){
 					var view = this;
 					view.level = extra.level;
-		            view.showView(vier.root);
+		            view.showView(view.root);
 				},
 				"DO_SET_ZOOM": function(event,extra){
 					var view = this;
