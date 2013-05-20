@@ -33,10 +33,6 @@
 				});
             },
             events:{
-            	"btap; .toolbar-button .btn":function(e){
-            		app.ContactDao.update(app.createDataSet(30,3,6));
-            	},
-            	
             	"change; .useRAF input[type='checkbox']" : function(event){
 					var view = this;
 					if(app.useRAF){
