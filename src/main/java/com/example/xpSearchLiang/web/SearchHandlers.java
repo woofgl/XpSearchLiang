@@ -163,4 +163,40 @@ public class SearchHandlers {
         }
         return WebResponse.success(ls);
     }
+    @WebGet("/api/getTagRel")
+    public WebResponse getTagRel(@WebParam("tagId") Long tagId) {
+        String sql = "select distinct on (b.tagid)  b.tagid id, c.tagname  from xpsearchliang_schema.tagrelpost a " +
+                "  inner join xpsearchliang_schema.tagrelpost b " +
+                "  inner join xpsearchliang_schema.tag c " +
+                "  on c.id = b.tagid" +
+                "  on a.postid = b.postid  where a.tagid <> b.tagid and a.tagid = %s";
+        List ls = new ArrayList();
+        Connection conn = dbManager.getConnection();
+        try {
+
+            PreparedStatement ps = conn.prepareStatement(String.format(sql, tagId));
+//            System.out.println(String.format(sql, q, q, q, q, pageSize, offset));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map map = new HashMap();
+                map.put("parentId", tagId);
+                map.put("id", rs.getLong("id"));
+                map.put("name", rs.getString("tagname"));
+                map.put("weight", 5);
+
+                ls.add(map);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                //
+            }
+        }
+        return WebResponse.success(ls);
+    }
 }
