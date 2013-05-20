@@ -78,3 +78,20 @@ insert into userreluser(userid, relid)
     inner join users c on c.id = a.owneruserid
     inner join users d on d.id = b.userid;
 
+
+
+CREATE TABLE tag
+(
+  id bigserial NOT NULL,
+  tagName varchar(256) not null,
+  CONSTRAINT tag_pkey PRIMARY KEY (id )
+) ;
+
+CREATE TABLE tagrelpost
+(
+  id bigserial NOT NULL,
+  tagid bigint not null,
+  postid bigint not null,
+  CONSTRAINT tagrelpost_pkey PRIMARY KEY (id )
+) ;
+

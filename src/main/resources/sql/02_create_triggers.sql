@@ -36,3 +36,16 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE
 ON users FOR EACH ROW EXECUTE PROCEDURE users_trigger();
+
+
+CREATE FUNCTION tag_trigger() RETURNS trigger AS $$
+begin
+  insert into tagrelpost(tagid, postid)
+    select id, new.id from post where tsv @@ to_tsquery(new.tagName);
+
+  return new;
+end
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tagupdate AFTER INSERT OR UPDATE
+ON tag FOR EACH ROW EXECUTE PROCEDURE tag_trigger();
