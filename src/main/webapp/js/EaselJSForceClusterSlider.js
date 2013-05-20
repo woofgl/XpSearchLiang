@@ -1,5 +1,11 @@
 ;(function() {
-
+    /**
+     * View: EaselJSForceClusterSlider
+     *
+     *
+     *
+     *
+     */
     (function ($) {
     	var _colors = ["#0B95B1","#ff7f0e","#aec7e8","#dddddd"];
     	var _centerColors = ["#ffe9c2","#0B95B1","#ff7f0e","#aec7e8","#dddddd"];
@@ -18,19 +24,22 @@
                 return $e;
             },
             postDisplay:function(data, config){
+                data = data||{};
 				var view = this;
                 var $e = view.$el;
                 view.level = $(".ControlBar #sl1").val();
                	var scaleVal = $(".ControlBar #sl2").val();
               	view.scaleVal = scaleVal/100;
-                view.showView({"id":user_id,"name":user_name});
+                view.root = data.root||{"id":user_id,"name":user_name};
+                view.getChildren = data.getChildren||getChildren;
+                view.showView(view.root);
 
 			},
 			docEvents: {
 				"DO_SET_LEVEL": function(event,extra){
 					var view = this;
 					view.level = extra.level;
-		            view.showView({"id":user_id,"name":user_name});
+		            view.showView(vier.root);
 				},
 				"DO_SET_ZOOM": function(event,extra){
 					var view = this;
@@ -89,7 +98,7 @@
             var parentName = data.name;
             //sort the weight
             //var childrenData = data.children;
-            getChildren(data).done(function (childrenData) {
+            view.getChildren(data).done(function (childrenData) {
 //                console.log(childrenData);
                 childrenData.sort(weightSort);
 

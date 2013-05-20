@@ -41,7 +41,7 @@ ON users FOR EACH ROW EXECUTE PROCEDURE users_trigger();
 CREATE FUNCTION tag_trigger() RETURNS trigger AS $$
 begin
   insert into tagrelpost(tagid, postid)
-    select id, new.id from post where tsv @@ to_tsquery(new.tagName);
+    select new.id, id from post where tsv @@ to_tsquery(new.tagName);
 
   return new;
 end
