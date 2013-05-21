@@ -3,8 +3,8 @@
     (function ($) {
         brite.registerView("ReportHeader",  {parent:".ContactCluster-header"}, {
             create:function (data, config) {
-                var $html = app.render("ReportHeader");
-               	var $e = $($html);
+                var html = app.render("ReportHeader", data||{data:[]});
+               	var $e = $(html);
                 return $e;
             },
             postDisplay:function (data, config) {
@@ -41,6 +41,16 @@
 						app.useRAF = true;
 					}
 					view.$el.trigger("DO_SET_RAF");
+				},
+            	"change; .demoData select" : function(event){
+					var view = this;
+					var id = $(event.target).val();
+                    console.log(id);
+                    if(id >= -1){
+                        var name = $(event.target).find("option:selected").text();
+                        var root = {id: id, name: name};
+                        view.$el.trigger("DO_SET_ROOT", root);
+                    }
 				},
             	
             	"btap;.nav li.nav-menu":function(e){

@@ -26,6 +26,19 @@
 						<input type="checkbox" checked="true"/>
 					</div>
 				</div>
+				<div class="toolbar-item  demoData">
+					<label>Data:</label>
+					<div class="toolbar-item-content">
+						<select>
+                <option value="-9999">Select Data</option>
+                {{#if data}}
+                  {{#each data}}
+                    <option value={{id}}>{{name}}</option>
+                  {{/each}}
+                {{/if}}
+						</select>
+					</div>
+				</div>
 			</div>
         </div>
 	</div>
