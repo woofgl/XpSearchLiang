@@ -23,6 +23,14 @@ var app = app||{};
                 return data;
             });
         },
+        getTagRel:function(tagId){
+            var opts={};
+            opts.method = 'Get';
+            opts.tagId = tagId;
+            return app.getJsonData(contextPath+"/api/getTagRel",opts).pipe(function(data){
+                return data;
+            });
+        },
         getUsers:function(){
             var opts={};
             opts.method = 'Get';

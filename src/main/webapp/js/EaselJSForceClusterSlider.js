@@ -11,8 +11,6 @@
     	var _centerColors = ["#ffe9c2","#0B95B1","#ff7f0e","#aec7e8","#dddddd"];
     	var _weightPerLength = [20,10,8,4];
     	var _baseLineLen = [80,40,20,10];
-        //because now, not user login, so use fixed user id;
-        var user_id = 100 , user_name = "Strozykowski";
 
         brite.registerView("EaselJSForceClusterSlider",  {
 			emptyParent : true,
@@ -30,16 +28,20 @@
                 view.level = $(".ControlBar #sl1").val();
                	var scaleVal = $(".ControlBar #sl2").val();
               	view.scaleVal = scaleVal/100;
-                view.root = data.root||{"id":user_id,"name":user_name};
+                view.root = data.root;
                 view.getChildren = data.getChildren||getChildren;
-                view.showView(view.root);
+                if(view.root) {
+                   view.showView(view.root);
+                }
 
 			},
 			docEvents: {
 				"DO_SET_LEVEL": function(event,extra){
 					var view = this;
 					view.level = extra.level;
-		            view.showView(view.root);
+                    if(view.root) {
+		                view.showView(view.root);
+                    }
 				},
 				"DO_SET_ZOOM": function(event,extra){
 					var view = this;
@@ -49,6 +51,13 @@
 				"DO_SET_RAF": function(event,extra){
 					createjs.Ticker.useRAF = app.useRAF;
 					createjs.Ticker.setFPS(60);
+				},
+				"DO_SET_ROOT": function(event,extra){
+                    var view = this;
+                    view.root = extra;
+                    if(view.root) {
+                        view.showView(view.root);
+                    }
 				}
 			},
            	showView:function (data) {
@@ -91,7 +100,6 @@
         
         // --------- Private Method --------- //
         function createContainer(data, originPoint, level, exAngle, isRecreate) {
-            console.log("lvele=" + level);
             var dfd = $.Deferred();
 
             var view = this;
@@ -278,7 +286,6 @@
 		    }
 		    
 		    function clickEvent(d){
-                console.log(d);
 		    	var view = this;
 		    	if(view.mousemove) return;
 		    	

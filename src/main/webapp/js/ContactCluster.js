@@ -10,8 +10,10 @@
             postDisplay:function (data, config) {
                 var view = this;
                 var $e = view.$el;
-                brite.display("ReportHeader");
-                brite.display("EaselJSForceClusterSlider");
+                app.Api.getUsers().done(function(result){
+                    brite.display("ReportHeader",'.ContactCluster-header',{data:result.result});
+                    brite.display("EaselJSForceClusterSlider");
+                });
             }
             
         });
