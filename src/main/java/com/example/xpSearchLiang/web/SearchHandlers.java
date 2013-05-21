@@ -163,6 +163,65 @@ public class SearchHandlers {
         }
         return WebResponse.success(ls);
     }
+    @WebGet("/api/getUsers")
+    public WebResponse getUsers() {
+        String sql = "select a.id, a.displayname from xpsearchliang_schema.users a limit 30" ;
+        List ls = new ArrayList();
+        Connection conn = dbManager.getConnection();
+        try {
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+//            System.out.println(String.format(sql, q, q, q, q, pageSize, offset));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map map = new HashMap();
+                map.put("id", rs.getLong("id"));
+                map.put("name", rs.getString("displayname"));
+
+                ls.add(map);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                //
+            }
+        }
+        return WebResponse.success(ls);
+    }    @WebGet("/api/getTags")
+    public WebResponse getTags() {
+        String sql = "select a.id, a.tagname from xpsearchliang_schema.tag a limit 30" ;
+        List ls = new ArrayList();
+        Connection conn = dbManager.getConnection();
+        try {
+
+            PreparedStatement ps = conn.prepareStatement(sql);
+//            System.out.println(String.format(sql, q, q, q, q, pageSize, offset));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map map = new HashMap();
+                map.put("id", rs.getLong("id"));
+                map.put("name", rs.getString("tagname"));
+
+                ls.add(map);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                //
+            }
+        }
+        return WebResponse.success(ls);
+    }
     @WebGet("/api/getTagRel")
     public WebResponse getTagRel(@WebParam("tagId") Long tagId) {
         String sql = "select distinct on (b.tagid)  b.tagid id, c.tagname  from xpsearchliang_schema.tagrelpost a " +
