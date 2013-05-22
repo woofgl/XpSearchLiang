@@ -44,6 +44,14 @@ var app = app||{};
             return app.getJsonData(contextPath+"/api/getTags",opts).pipe(function(data){
                 return data;
             });
+        },
+        addTag:function(tagName){
+            var opts={};
+            opts.method = 'Post';
+            opts.tagName = tagName;
+            return app.getJsonData(contextPath+"/api/addTag",opts).pipe(function(data){
+                return data;
+            });
         }
     }
 })();

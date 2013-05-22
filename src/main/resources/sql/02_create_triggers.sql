@@ -38,10 +38,10 @@ CREATE TRIGGER tsvectorupdate BEFORE INSERT OR UPDATE
 ON users FOR EACH ROW EXECUTE PROCEDURE users_trigger();
 
 
-CREATE FUNCTION tag_trigger() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION tag_trigger() RETURNS trigger AS $$
 begin
-  insert into tagrelpost(tagid, postid)
-    select new.id, id from post where tsv @@ to_tsquery(new.tagName);
+  insert into xpsearchliang_schema.tagrelpost(tagid, postid)
+    select new.id, id from xpsearchliang_schema.post where tsv @@ to_tsquery(new.tagName);
 
   return new;
 end

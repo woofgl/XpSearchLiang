@@ -1,11 +1,10 @@
 ;(function() {
 
     (function ($) {
-        brite.registerView("ReportHeader",  {parent:".ContactCluster-header"}, {
+        brite.registerView("ReportHeader",  {emptypparent:true, parent:".ContactCluster-header"}, {
             create:function (data, config) {
                 var html = app.render("ReportHeader", data||{data:[]});
-               	var $e = $(html);
-                return $e;
+               	return html;
             },
             postDisplay:function (data, config) {
                 var view = this;

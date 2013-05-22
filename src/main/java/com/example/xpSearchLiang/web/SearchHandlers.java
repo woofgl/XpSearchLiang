@@ -4,6 +4,7 @@ import com.britesnow.snow.web.handler.annotation.WebModelHandler;
 import com.britesnow.snow.web.param.annotation.WebModel;
 import com.britesnow.snow.web.param.annotation.WebParam;
 import com.britesnow.snow.web.rest.annotation.WebGet;
+import com.britesnow.snow.web.rest.annotation.WebPost;
 import com.example.xpSearchLiang.DBManager;
 import com.example.xpSearchLiang.utils.XmlReader;
 import com.google.inject.Inject;
@@ -192,9 +193,11 @@ public class SearchHandlers {
             }
         }
         return WebResponse.success(ls);
-    }    @WebGet("/api/getTags")
+    }
+
+    @WebGet("/api/getTags")
     public WebResponse getTags() {
-        String sql = "select a.id, a.tagname from xpsearchliang_schema.tag a limit 30" ;
+        String sql = "select a.id, a.tagname from xpsearchliang_schema.tag a limit 50" ;
         List ls = new ArrayList();
         Connection conn = dbManager.getConnection();
         try {
@@ -257,5 +260,26 @@ public class SearchHandlers {
             }
         }
         return WebResponse.success(ls);
+    }
+
+    @WebPost("/api/addTag")
+    public WebResponse addTag(@WebParam("tagName") String tagName) {
+        String sql = "insert into xpsearchliang_schema.tag (tagName) values ( '%s' )";
+        Connection conn = dbManager.getConnection();
+        try {
+
+            PreparedStatement ps = conn.prepareStatement(String.format(sql, tagName));
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                //
+            }
+        }
+        return WebResponse.success();
     }
 }
