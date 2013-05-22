@@ -1,41 +1,45 @@
 <script id="Pagination" type="text/html">
     <div class="Pagination">
-        <form method="post" action="" name="qPagerForm">
-            {{#equal 1 pageNo}}
-            <span class="disabled">&laquo;&nbsp;Prev</span>
-            {{else}}
-            <a  class="prev">&laquo;&nbsp;Prev</a>
-            {{/equal}}
-          {{#gt 5 pageNo}}
-            <a data-page="1">1</a>
-            <a data-page="2">2</a>&hellip;
-          {{/gt}}
 
-          {{#fromTo start end}}
-             {{#equal pageNo num}}
-            <span class="current">{{num}}</span>
-             {{else}}
-            <a data-page={{num}}>{{num}}</a>
-             {{/equal}}
-          {{/fromTo}}
-
-            {{#lt end pageCount-2}}
-            &hellip;
-            {{/lt}}
-
-            {{#lt end pageCount-1}}
-            <a data-page="{{pageCount-1}})">{{pageCount-1}}</a>
-            {{/lt}}
-
-            {{#lt end pageCount}}
-            <a href="javascript:void(0)" onclick="turnOverPage(${pageCount})">${pageCount}</a>
-            {{/lt}}
-
-            {{#gte pageNo pageCount}}
-            <span class="disabled">Next&nbsp;&raquo;</span>
-            {{else}}
-            <a class="next">Next&nbsp;&raquo;</a>
-            {{/gte}}
-        </form>
     </div>
+</script>
+
+<script id="Pagination-detail" type="text/html">
+    <form method="post" action="" name="qPagerForm">
+      {{#equal 1 pageNo}}
+          <span class="disabled">&laquo;&nbsp;Prev</span>
+      {{else}}
+          <a  class="prev">&laquo;&nbsp;Prev</a>
+      {{/equal}}
+      {{#gt pageNo 5}}
+          <a data-page="1">1</a>
+          <a data-page="2">2</a>&hellip;
+      {{/gt}}
+
+      {{#fromTo start end pageNo}}
+        {{#equal pageNo num}}
+            <span class="current">{{num}}</span>
+        {{else}}
+            <a data-page={{num}}>{{num}}</a>
+        {{/equal}}
+      {{/fromTo}}
+
+      {{#if end_2}}
+          &hellip;
+      {{/if}}
+
+      {{#if end_1}}
+          <a data-page="{{end_1}})">{{end_1}}</a>
+      {{/if}}
+
+      {{#lt end pageCount}}
+          <a data-page="{{pageCount}}">{{pageCount}}</a>
+      {{/lt}}
+
+      {{#gte pageNo pageCount}}
+          <span class="disabled">Next&nbsp;&raquo;</span>
+      {{else}}
+          <a class="next">Next&nbsp;&raquo;</a>
+      {{/gte}}
+    </form>
 </script>

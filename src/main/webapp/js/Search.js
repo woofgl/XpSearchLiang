@@ -21,7 +21,6 @@
                 "click; .searchForm .btn":function(event) {
                      var view = this;
                     var q = view.$el.find("input[type='text']").val();
-                    console.log(q);
                     search.call(view, {q: q});
                     return false;
                 }
@@ -33,10 +32,17 @@
         var view = this;
         if(data.q){
             view.$el.find("input[type='text']").val(data.q);
-            app.Api.search({q:data.q}).done(function(result) {
-                console.log(result)
+            app.Api.search(data).done(function(result) {
                 var html = render("Search-result", result.result);
                 view.$el.find(".results").empty().append(html);
+                brite.display("Pagination",view.$el.find(".page"),{
+                    pageNo: result.result.pageNo,
+                    pageSize: result.result.pageSize,
+                    totalCount:result.result.totalCount,
+                    callback:function(pageNo,pageSize){
+                        search.call(view,{q:data.q, pageNo:pageNo, pageSize:pageSize});
+                    }
+                })
             })
         }
     }
