@@ -23,6 +23,16 @@
                     var q = view.$el.find("input[type='text']").val();
                     search.call(view, {q: q});
                     return false;
+                },
+                "keyup; input[type='text']":function(event){
+                    console.log(event);
+                    if(event.which==13){
+                        var view = this;
+                        var q = view.$el.find("input[type='text']").val();
+                        search.call(view, {q: q});
+
+                    }
+                    return false;
                 }
             },
             docEvents: {}

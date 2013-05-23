@@ -28,7 +28,17 @@
                     var q = view.$el.find("input[type='text']").val();
                     brite.display("Search", ".MainView-content", {q: q});
                     return false;
+                },
+                "keyup; input[type='text']":function(event){
+                    if(event.which==13){
+                        var view = this;
+                        var q = view.$el.find("input[type='text']").val();
+                        brite.display("Search", ".MainView-content", {q: q});
+
+                    }
+                    return false;
                 }
+
 
             },
             docEvents: {}
