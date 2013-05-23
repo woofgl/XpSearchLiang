@@ -71,15 +71,6 @@ CREATE TABLE userreluser
   CONSTRAINT userreluser_pkey PRIMARY KEY (id )
 ) ;
 
--- get data from select
-insert into userreluser(userid, relid)
-  select distinct on (c.id, d.id) c.id , d.id relif from post a
-    inner join  comment b on a.id = b.postid
-    inner join users c on c.id = a.owneruserid
-    inner join users d on d.id = b.userid;
-
-
-
 CREATE TABLE tag
 (
   id bigserial NOT NULL,
