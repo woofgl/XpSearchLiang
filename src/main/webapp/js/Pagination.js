@@ -13,7 +13,7 @@
             },
 
             postDisplay: function (data) {
-                view = this;
+                var view = this;
                 renderPage.call(view, data.pageNo||1, data.pageSize||10, data.totalCount, data.callback);
             },
             events: {

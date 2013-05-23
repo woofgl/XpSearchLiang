@@ -18,7 +18,7 @@
             events: {
                 "click; button.import":function(){
                     console.log("import");
-                    app.api.import().done(function(data) {
+                    app.Api.import().done(function(data) {
                         console.log("import success");
                     })
                     return false;
