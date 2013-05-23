@@ -25,7 +25,7 @@ import java.util.Map;
 public class SearchHandlers {
 
 
-    public static final String sql = "select distinct on (a.id,b.id, c.id, d.id) a.id, a.body, a.title, a.tags,b.text, c.displayName puser, d.displayname cuser  from xpsearchliang_schema.post a \n" +
+    public static final String sql = "select distinct on (a.id) a.id, a.body, a.title, a.tags,b.text, c.displayName puser, d.displayname cuser  from xpsearchliang_schema.post a " +
             " inner join  xpsearchliang_schema.comment b on a.id = b.postid" +
             " inner join xpsearchliang_schema.users c on a.owneruserid = c.id" +
             " inner join xpsearchliang_schema.users d on b.userId = d.id" +
@@ -35,7 +35,7 @@ public class SearchHandlers {
             "      or c.tsv @@ to_tsquery('%s')" +
             " limit %s offset %s";
     public static final String sqlCount = "select count(*) from  ( " +
-            "select distinct on (a.id,b.id, c.id, d.id)  a.id,b.id, c.id, d.id from xpsearchliang_schema.post a " +
+            "select distinct on (a.id)  a.id from xpsearchliang_schema.post a " +
             " inner join  xpsearchliang_schema.comment b on a.id = b.postid " +
             " inner join xpsearchliang_schema.users c on a.owneruserid = c.id" +
             " inner join xpsearchliang_schema.users d on b.userId = d.id" +
@@ -68,7 +68,7 @@ public class SearchHandlers {
         if (q == null) {
             q = "";
         }
-        int offset = (pageNo - 1) * pageSize + 1;
+        int offset = (pageNo - 1) * pageSize;
         int totalCount = 0;
 
         Connection conn = dbManager.getConnection();

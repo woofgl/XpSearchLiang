@@ -38,7 +38,10 @@
         });
 
         function calc(page) {
-            page.pageCount = parseInt(page.totalCount/page.pageSize) + page.totalCount % page.pageSize;
+            page.pageCount = parseInt(page.totalCount/page.pageSize) ;
+            if(page.totalCount % page.pageSize != 0 ) {
+                page.pageCount += 1;
+            }
             if(page.pageNo > 5){
                 page.start = page.pageNo -1;
             }else{
@@ -55,6 +58,7 @@
             if(page.end < page.pageCount -1) {
                 page.end_1 = page.pageCount - 1;
             }
+//            console.log(page)
         }
 
     function renderPage(pageNo, pageSize, totalCount, callback) {
