@@ -23,6 +23,20 @@
           <h3 class="title">No Title</h3>
       {{/if}}
         <div class="details">{{#decode body}}{{/decode}}</div>
+        <div class="poster">{{puser}}</div>
+        <div class="comments">
+            {{#comments id 'Search-comments'}}{{/comments}}
+        </div>
+    {{/each}}
+  {{/if}}
+</script>
+<script id="Search-comments" type="text/html">
+  {{#if result}}
+    {{#each result}}
+        <div class="comment">
+          <span>{{user}}</span>: {{text}}
+
+        </div>
     {{/each}}
   {{/if}}
 </script>

@@ -60,4 +60,15 @@
 			}
     	}
     });
+
+    Handlebars.registerHelper('comments', function(postId,template,options) {
+        var html;
+        app.Api.getComments(postId).done(function(result){
+            html = Handlebars.templates[template](result);
+            console.log(html);
+        });
+
+        return html;
+    });
+
 })(jQuery);
