@@ -38,6 +38,15 @@ var app = app||{};
                 return data;
             });
         },
+        getComments:function(postId){
+            var opts={};
+            opts.method = 'Get';
+            opts.postId = postId
+            opts.async = false;
+            return app.getJsonData(contextPath+"/api/getComments",opts).pipe(function(data){
+                return data;
+            });
+        },
         getTags:function(){
             var opts={};
             opts.method = 'Get';

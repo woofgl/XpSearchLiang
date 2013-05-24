@@ -74,7 +74,7 @@ String.prototype.format = function(args) {
         jQuery.ajax({
             type : params.method ? params.method : "Post",
             url : url,
-            async : true,
+            async : params.async !== false,
             data : params,
             dataType : "json"
         }).success(function(data) {

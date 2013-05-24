@@ -113,10 +113,6 @@ public class SearchHandlers {
         return WebResponse.success(m);
     }
 
-    @WebModelHandler(startsWith = "/contactCluster")
-    public void contactCluster(@WebModel Map m) {
-
-    }
 
     @WebGet("/api/import")
     public WebResponse importFile() {
@@ -209,6 +205,41 @@ public class SearchHandlers {
                 Map map = new HashMap();
                 map.put("id", rs.getLong("id"));
                 map.put("name", rs.getString("tagname"));
+
+                ls.add(map);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                //
+            }
+        }
+        return WebResponse.success(ls);
+    }
+    @WebGet("/api/getComments")
+    public WebResponse getComments(@WebParam("postId") Long postId) {
+        String sql = "select a.id, a.text, a.score, b.displayname " +
+                " from xpsearchliang_schema.comment a " +
+                " inner join xpsearchliang_schema.users b on a.userid = b.id" +
+                " where a.postid = %s " ;
+        List ls = new ArrayList();
+        Connection conn = dbManager.getConnection();
+        try {
+
+            PreparedStatement ps = conn.prepareStatement(String.format(sql, postId));
+//            System.out.println(String.format(sql, q, q, q, q, pageSize, offset));
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map map = new HashMap();
+                map.put("id", rs.getLong("id"));
+                map.put("text", rs.getString("text"));
+                map.put("score", rs.getInt("score"));
+                map.put("user", rs.getString("displayname"));
 
                 ls.add(map);
             }
