@@ -1,7 +1,5 @@
 package com.example.xpSearchLiang.web;
 
-import com.britesnow.snow.web.handler.annotation.WebModelHandler;
-import com.britesnow.snow.web.param.annotation.WebModel;
 import com.britesnow.snow.web.param.annotation.WebParam;
 import com.britesnow.snow.web.rest.annotation.WebGet;
 import com.britesnow.snow.web.rest.annotation.WebPost;
@@ -168,7 +166,6 @@ public class SearchHandlers {
         try {
 
             PreparedStatement ps = conn.prepareStatement(sql);
-//            System.out.println(String.format(sql, q, q, q, q, pageSize, offset));
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Map map = new HashMap();
@@ -199,7 +196,6 @@ public class SearchHandlers {
         try {
 
             PreparedStatement ps = conn.prepareStatement(sql);
-//            System.out.println(String.format(sql, q, q, q, q, pageSize, offset));
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Map map = new HashMap();
