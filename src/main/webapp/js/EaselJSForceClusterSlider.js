@@ -76,9 +76,13 @@
 //				$ClusterChart.html('<canvas id="ClusterChart" ></canvas>');
 				  
 				var canvas = $e.find(".clusterChart canvas")[0];
+
                 console.log(canvas);
 				canvas.width = $e.width();
         		canvas.height = $e.height();
+
+                var context2D =canvas.getContext("2d");
+                context2D.clearRect(0,0, canvas.width, canvas.height);
         		
         		view.canvasW = canvas.width;
         		view.canvasH = canvas.height;
@@ -289,6 +293,10 @@
 		    function clickEvent(d){
 		    	var view = this;
 		    	if(view.mousemove) return;
+
+                var canvas = view.$el.find(".clusterChart canvas")[0];
+                var context2D =canvas.getContext("2d");
+                context2D.clearRect(0,0, canvas.width, canvas.height);
 		    	
 		    	//get the speed value
 		    	app.animationSpeed = $(".ControlBar .speed input").val();
