@@ -44,7 +44,6 @@
             	"change; .demoData select" : function(event){
 					var view = this;
 					var id = $(event.target).val();
-                    console.log(id);
                     if(id >= -1){
                         var name = $(event.target).find("option:selected").text();
                         var root = {id: id, name: name};
